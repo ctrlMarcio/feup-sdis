@@ -1,0 +1,6 @@
+# IntellIJ
+.idea/
+sdis.iml
+
+# Java
+target/
