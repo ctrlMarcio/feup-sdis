@@ -1,6 +1,6 @@
 # IntellIJ
-.idea/
-sdis.iml
+**/.idea/
+**/*.iml
 
 # Java
-target/
+**/target/

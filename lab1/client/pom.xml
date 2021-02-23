@@ -2,11 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>lab1</artifactId>
+        <groupId>io.github.ctrlMarcio.sdis</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.ctrlMarcio</groupId>
-    <artifactId>sdis</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>client</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -15,9 +18,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>RELEASE</version>
+            <groupId>io.github.ctrlMarcio.sdis</groupId>
+            <artifactId>framework</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
