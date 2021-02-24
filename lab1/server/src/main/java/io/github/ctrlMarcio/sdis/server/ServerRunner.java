@@ -1,8 +1,8 @@
-package io.github.ctrlMarcio.sdis.lab1.server;
+package io.github.ctrlMarcio.sdis.server;
 
 import java.io.IOException;
 
-public class Server {
+public class ServerRunner {
 
     public static void main(String[] args) {
         // verifies the program was called correctly
@@ -22,7 +22,7 @@ public class Server {
 
         // initializes and runs the server
         try {
-            UDPServer server = new UDPServer(serverPort);
+            Server server = new Server(serverPort);
             server.run();
         } catch (IOException e) {
             System.err.printf("Can't run the server on port %d\n", serverPort);

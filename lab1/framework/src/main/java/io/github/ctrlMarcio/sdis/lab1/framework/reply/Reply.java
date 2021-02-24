@@ -31,7 +31,7 @@ public class Reply {
 
     public String toDisplayString() {
         if (returnValue == Reply.ERROR_VALUE)
-            return "ERROR";
-        else return String.format("%d %s %s", this.returnValue, this.dns, this.ip);
+            return "NOT_FOUND";
+        else return String.format("%d\n%s %s", this.returnValue, this.dns, this.ip);
     }
 }

@@ -1,58 +1,54 @@
 package io.github.ctrlMarcio.sdis.lab1.framework.request;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 public class Request {
 
-    public static final int MAX_LENGTH = 256;
+    @Builder.Default
+    protected String method = "";
 
-    @NonNull
-    @Getter
-    private final RequestType requestType;
+    @Builder.Default
+    protected List<String> args = new ArrayList<>();
 
-    @Getter
-    private final String dns;
+    @Builder.Default
+    protected String content = "";
 
-    @Getter
-    private final String ip;
+    @Builder.Default
+    protected boolean hasReply = false;
 
-    public static Request fromPacket(DatagramPacket packet) {
-        String requestString = new String(packet.getData(), 0, packet.getLength());
-        return Request.fromString(requestString);
-    }
+    public RequestResponse send(DatagramSocket socket, InetAddress address, int port) throws IOException {
+        List<String> fields = new ArrayList<>();
 
-    public static Request fromString(String string) {
-        String[] parameters = string.split(" ");
+        fields.add(method);
+        fields.addAll(args);
+        fields.add(content);
+        fields.removeIf(String::isEmpty);
 
-        if (parameters[0].equals(RequestType.REGISTER.toString())) {
-            return Request.builder()
-                    .requestType(RequestType.REGISTER)
-                    .ip(parameters[2])
-                    .dns(parameters[1])
-                    .build();
-        } else if (parameters[0].equals(RequestType.LOOKUP.toString())) {
-            return Request.builder()
-                    .requestType(RequestType.LOOKUP)
-                    .dns(parameters[1])
-                    .build();
+        String information = String.join(" ", fields);
+
+        byte[] buffer = information.getBytes();
+
+        socket.send(new DatagramPacket(buffer, buffer.length, address, port));
+
+        if (hasReply) {
+            byte[] receiveBuffer = new byte[256];
+
+            DatagramPacket packet = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+            socket.receive(packet);
+
+            String content = new String(packet.getData(), 0, packet.getLength());
+
+            return RequestResponse.builder().content(content).build();
         }
-        return null; // won't
-    }
 
-    @Override
-    public String toString() {
-        if (requestType == RequestType.REGISTER)
-            return String.format("%s %s %s", requestType.toString(), dns, ip);
-
-        if (requestType == RequestType.LOOKUP)
-            return String.format("%s %s", requestType.toString(), dns);
-
-        // won't happen tho
-        return null;
+        return RequestResponse.builder().build();
     }
 }

@@ -1,7 +1,8 @@
-package io.github.ctrlMarcio.sdis.server;
+package io.github.ctrlMarcio.sdis.server.dns;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class DNSManager {
 
@@ -15,9 +16,8 @@ public class DNSManager {
         return true;
     }
 
-    public String lookup(String dns) {
-        System.out.println(dns);
-        return this.map.get(dns);
+    public Optional<String> lookup(String dns) {
+        return Optional.of(this.map.get(dns));
     }
 
     public int getEntriesAmount() {
