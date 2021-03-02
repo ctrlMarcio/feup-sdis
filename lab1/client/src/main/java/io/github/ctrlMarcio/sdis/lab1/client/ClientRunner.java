@@ -32,7 +32,7 @@ public class ClientRunner {
             RequestResponse response =
                     client.send(Request.builder().method(args[2].toUpperCase()).args(argsList).hasReply(true).build());
 
-            System.out.println(response.getContent());
+            System.out.println(response);
 
             client.close();
         } catch (Exception ignored) {

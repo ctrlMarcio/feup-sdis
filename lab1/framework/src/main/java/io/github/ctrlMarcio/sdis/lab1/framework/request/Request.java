@@ -25,16 +25,10 @@ public class Request {
     protected boolean hasReply = false;
 
     public RequestResponse send(DatagramSocket socket, InetAddress address, int port) throws IOException {
-        List<String> fields = new ArrayList<>();
+        String header = String.join(" ", method, String.join(" ", args));
+        String request = !content.isEmpty() ? String.join("\n", header, content) : header;
 
-        fields.add(method);
-        fields.addAll(args);
-        fields.add(content);
-        fields.removeIf(String::isEmpty);
-
-        String information = String.join(" ", fields);
-
-        byte[] buffer = information.getBytes();
+        byte[] buffer = request.getBytes();
 
         socket.send(new DatagramPacket(buffer, buffer.length, address, port));
 
@@ -46,7 +40,7 @@ public class Request {
 
             String content = new String(packet.getData(), 0, packet.getLength());
 
-            return RequestResponse.builder().content(content).build();
+            return RequestResponse.fromString(content);
         }
 
         return RequestResponse.builder().build();

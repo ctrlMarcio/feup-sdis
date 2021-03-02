@@ -1,8 +1,8 @@
 package io.github.ctrlMarcio.sdis.lab1.framework.command;
 
+import io.github.ctrlMarcio.sdis.lab1.framework.response.Response;
+
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,14 +24,12 @@ public class CommandManager {
         return commands.remove(command.getName()) != null;
     }
 
-    public boolean execute(String commandName, DatagramSocket socket, InetAddress sender, int senderPort,
-                           String... args) throws IOException {
+    public Response execute(String commandName, String... args) throws IOException {
         Command command = commands.get(commandName);
 
-        if (command == null) return false;
+        if (command == null)
+            return Response.builder().returnCode(Response.ERROR_VALUE).content("INVALID_METHOD").build();
 
-        command.execute(socket, sender, senderPort, args);
-
-        return true;
+        return command.execute(args);
     }
 }
