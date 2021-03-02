@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 15-ea
-      - name: Lab directory
-        run: cd lab1
       - name: Build 🔨
-        run: mvn --batch-mode --update-snapshots install
+        run: |
+          cd lab1
+          mvn --batch-mode --update-snapshots install
