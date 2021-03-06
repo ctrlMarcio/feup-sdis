@@ -4,6 +4,9 @@ import io.github.ctrlMarcio.sdis.lab2.framework.address.Address;
 import io.github.ctrlMarcio.sdis.lab2.framework.request.Request;
 import io.github.ctrlMarcio.sdis.lab2.framework.request.RequestResponse;
 
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,34 +18,17 @@ public class ClientRunner {
             return;
         }
 
-        String mcastHost = args[0];
-
         try {
-            int mcastPort = getServerPort(args);
-            MulticastClient multicastClient = new MulticastClient(mcastHost, mcastPort);
+            String multicastHost = args[0];
+            int multicastPort = getServerPort(args);
 
-            multicastClient.open();
-            Address serverAddress = multicastClient.receiveAddress();
+            Address serviceAddress = getServiceAddress(multicastHost, multicastPort);
 
-            Client client = new Client(serverAddress);
-            client.open();
+            RequestResponse response = sendServiceRequest(serviceAddress, args);
 
-            // TODO temporary, just parse it
-            RequestResponse response = client.send(Request.builder().method("REGISTER").args(Arrays.asList("www.google.com", "127.0.0.1")).hasReply(true).build());
             System.out.println(response);
-//            List<String> argsList = new ArrayList<>(Arrays.asList(args));
-//            argsList.remove(args[0]);
-//            argsList.remove(args[1]);
-//            argsList.remove(args[2]);
-//
-//            RequestResponse response =
-//                    multicastClient.send(Request.builder().method(args[2].toUpperCase()).args(argsList).hasReply(true).build());
-//
-//            System.out.println(response);
-
-            multicastClient.close();
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -53,5 +39,34 @@ public class ClientRunner {
             System.err.printf("<port> should be a number. %s is not a number\n", args[0]);
             throw e;
         }
+    }
+
+    private static Address getServiceAddress(String multicastAddress, int multicastPort) throws IOException {
+        MulticastClient multicastClient = new MulticastClient(multicastAddress, multicastPort);
+
+        multicastClient.open();
+        Address serverAddress = multicastClient.receiveAddress();
+        multicastClient.close();
+
+        return serverAddress;
+    }
+
+    private static RequestResponse sendServiceRequest(Address serviceAddress, String... args) throws IOException {
+        int methodIndex = 2;
+
+        String method = args[methodIndex];
+        String[] requestArgs = new String[args.length - (methodIndex + 1)];
+
+        for (int i = 0; i < requestArgs.length; ++i)
+            requestArgs[i] = args[methodIndex + i + 1];
+
+        Client client = new Client(serviceAddress);
+        client.open();
+
+        RequestResponse response = client.send(Request.builder().method(method).args(Arrays.asList(requestArgs)).hasReply(true).build());
+
+        client.close();
+
+        return response;
     }
 }

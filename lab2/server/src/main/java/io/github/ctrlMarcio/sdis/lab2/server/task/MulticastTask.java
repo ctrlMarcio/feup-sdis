@@ -41,7 +41,7 @@ public class MulticastTask extends TimerTask {
         byte[] buffer = message.getBytes();
 
         try {
-            socket.send(new DatagramPacket(buffer, buffer.length, address, this.multicastPort)); // TODO port
+            socket.send(new DatagramPacket(buffer, buffer.length, address, this.multicastPort));
         } catch (IOException e) {
             e.printStackTrace();
         }

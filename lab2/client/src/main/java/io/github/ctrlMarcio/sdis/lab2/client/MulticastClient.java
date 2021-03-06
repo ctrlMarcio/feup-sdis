@@ -3,28 +3,34 @@ package io.github.ctrlMarcio.sdis.lab2.client;
 import io.github.ctrlMarcio.sdis.lab2.framework.address.Address;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.*;
 
 public class MulticastClient {
 
-    private final String multicastHost;
-
     private final int multicastPort;
 
-    private DatagramSocket socket;
+    private MulticastSocket socket;
 
-    public MulticastClient(String multicastHost, int multicastPort) {
-        this.multicastHost = multicastHost;
+    private final NetworkInterface networkInterface;
+
+    private final InetSocketAddress socketAddress;
+
+    public MulticastClient(String multicastHost, int multicastPort) throws UnknownHostException, SocketException {
+        InetAddress group = InetAddress.getByName(multicastHost);
+
         this.multicastPort = multicastPort;
+        this.socketAddress = new InetSocketAddress(group, multicastPort);
+
+        this.networkInterface = NetworkInterface.getByInetAddress(group);
     }
 
-    public void open() throws SocketException {
-        this.socket = new DatagramSocket(this.multicastPort);
+    public void open() throws IOException {
+        this.socket = new MulticastSocket(this.multicastPort);
+        this.subscribe();
     }
 
-    public void close() {
+    public void close() throws IOException {
+        this.unsubscribe();
         this.socket.close();
     }
 
@@ -41,4 +47,13 @@ public class MulticastClient {
         String message = this.receive();
         return new Address(message);
     }
+
+    private void subscribe() throws IOException {
+        socket.joinGroup(this.socketAddress, this.networkInterface);
+    }
+
+    private void unsubscribe() throws IOException {
+        socket.leaveGroup(this.socketAddress, this.networkInterface);
+    }
+
 }

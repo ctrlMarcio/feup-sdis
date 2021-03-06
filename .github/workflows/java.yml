@@ -16,3 +16,33 @@ jobs:
         run: |
           cd lab1
           mvn --batch-mode --update-snapshots install
+      - uses: actions/upload-artifact@v2
+        with:
+          name: client-jar
+          path: lab1/client/target/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: server-jar
+          path: lab1/server/target/
+
+  build-lab2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15-ea
+      - name: Build 🔨
+        run: |
+          cd lab2
+          mvn --batch-mode --update-snapshots install
+      - uses: actions/upload-artifact@v2
+        with:
+          name: client-jar
+          path: lab2/client/target/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: server-jar
+          path: lab2/server/target/
