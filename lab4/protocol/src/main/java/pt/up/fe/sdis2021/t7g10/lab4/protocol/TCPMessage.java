@@ -11,9 +11,9 @@ public interface TCPMessage extends Serializable {
         return out.toByteArray();
     }
 
-    static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
+    static Object deserialize(InputStream in) throws IOException, ClassNotFoundException {
         ObjectInputStream is = new ObjectInputStream(in);
+
         return is.readObject();
     }
 }

@@ -32,7 +32,7 @@ public class ClientWorkerThread extends Thread {
             case LOOKUP -> {
                 var lookup = (LookupCommand) command;
                 var record = dnsManager.lookup(lookup.getName());
-                var lookupReply = new Reply(record.isPresent() ? record.get().getIp() : "NOT_FOUND");
+                var lookupReply = new Reply(record.isPresent() ? String.format("%s %s", record.get().getIp(), record.get().getName()) : "NOT_FOUND");
                 TCPMessages.send(socket, lookupReply);
             }
             case REGISTER -> {
